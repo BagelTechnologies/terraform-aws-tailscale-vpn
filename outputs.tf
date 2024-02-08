@@ -1,8 +1,3 @@
-output "ip_address" {
-  description = "The Elastic IP address associated with the server."
-  value = aws_eip.main.public_ip
-}
-
 output "security_group_id" {
   description = "The ID of the Security Group for the server."
   value = module.security_group.id
