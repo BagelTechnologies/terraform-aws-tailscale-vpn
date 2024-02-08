@@ -56,6 +56,8 @@ resource "aws_instance" "main" {
   ], var.extra_security_groups)
   user_data = local.user_data
   tags = { "Name" = local.common_name }
+
+  associate_public_ip_address = false  # Set to false to disable public IP
 }
 
 resource "aws_eip_association" "main" {
