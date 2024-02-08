@@ -35,14 +35,6 @@ resource "random_shuffle" "subnet" {
   result_count = 1
 }
 
-resource "aws_eip" "main" {
-  /*
-  A fixed IP address
-  */
-  vpc = true
-  tags = { "Name" = local.common_name }
-}
-
 resource "aws_instance" "main" {
   /*
   The VPN-bastion server
@@ -60,14 +52,6 @@ resource "aws_instance" "main" {
   associate_public_ip_address = false  # Set to false to disable public IP
 }
 
-resource "aws_eip_association" "main" {
-  /*
-  Associate the server to the IP address
-  */
-  instance_id = aws_instance.main.id
-  allocation_id = aws_eip.main.id
-}
-
 module "security_group" {
   /*
   The security group specific for the server
@@ -78,17 +62,4 @@ module "security_group" {
   vpc_id = var.vpc_id
   ingress_cidr_blocks = var.ingress_cidr_blocks
   ingress_security_groups = var.ingress_security_groups
-}
-
-resource "aws_route53_record" "main" {
-  /*
-  DNS record pointing to the VPN server
-  */
-  count = var.dns_zone_id == null ? 0 : 1
-
-  zone_id = var.dns_zone_id
-  name = var.hostname
-  type = "A"
-  ttl = 300
-  records = [aws_eip.main.public_ip]
 }
